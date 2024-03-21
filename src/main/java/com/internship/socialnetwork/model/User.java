@@ -1,17 +1,14 @@
-package com.socialNetwork.socialNetwork.model;
+package com.internship.socialnetwork.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
-import java.io.Serializable;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
 public class User {
