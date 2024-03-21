@@ -1,16 +1,17 @@
-version: '3.9'
-
+version: "3.8"
 services:
-
   db:
     image: postgres
-    restart: always
-    shm_size: 128mb
-    environment:
-      POSTGRES_PASSWORD: socialNetwork
-
-  adminer:
-    image: adminer
+    container_name: pg_database
     restart: always
     ports:
-      - 8080:8080
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: nqode
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - local_pgdata:/var/lib/postgresql/data
+
+volumes:
+  local_pgdata:
