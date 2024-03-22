@@ -7,7 +7,6 @@ import jakarta.persistence.ManyToOne;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.boot.model.source.internal.hbm.RelationalObjectBinder;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +22,7 @@ public class Comment {
     @ManyToOne
     private Post post;
 
-    @ManyToOne()
+    @ManyToOne
     private Comment parentComment;
 
     @ManyToOne
