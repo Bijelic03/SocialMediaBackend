@@ -42,5 +42,4 @@ public class User implements Serializable {
     @ManyToMany
     private List<User> friends;
 
-
 }
