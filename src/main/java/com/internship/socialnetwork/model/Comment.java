@@ -5,8 +5,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-
+import jakarta.persistence.Id;
 @Data
 @NoArgsConstructor
 @Entity
