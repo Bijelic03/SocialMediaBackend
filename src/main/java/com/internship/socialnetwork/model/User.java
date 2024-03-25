@@ -1,13 +1,15 @@
 package com.internship.socialnetwork.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Column;
 
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +17,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "`user`")
@@ -27,7 +31,6 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private char[] password;
 
     @Column(nullable = false)
@@ -43,6 +46,5 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user")
     private List<UserFriend> friendships;
-
 
 }
