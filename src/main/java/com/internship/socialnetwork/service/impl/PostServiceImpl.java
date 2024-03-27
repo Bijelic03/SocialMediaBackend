@@ -1,49 +1,70 @@
 package com.internship.socialnetwork.service.impl;
 
 import com.internship.socialnetwork.dto.PostDto;
+import com.internship.socialnetwork.exception.NotFoundException;
 import com.internship.socialnetwork.model.Post;
 import com.internship.socialnetwork.repository.PostRepository;
 import com.internship.socialnetwork.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.internship.socialnetwork.dto.PostDto.convertToDto;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private static final String NOT_FOUND_EXCEPTION_MSG = "Post with id %s not found!";
+
     private final PostRepository postRepository;
 
-    public Post getPostModel(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+    @Override
+    public Post getModel(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_EXCEPTION_MSG, id)));
     }
 
-    public List<PostDto> getAllPosts() {
-        return postRepository.findAll().stream().map(PostDto::convertToDto).collect(Collectors.toList());
+    @Override
+    public List<PostDto> getAll() {
+        return postRepository.findAll()
+                .stream()
+                .map(PostDto::convertToDto)
+                .toList();
     }
 
-    public PostDto getPost(Long id) {
-        return PostDto.convertToDto(postRepository.findById(id).orElseThrow(() -> new NotFoundException()));
+    @Override
+    public List<PostDto> getAllByAuthorId(Long authorId) {
+        return postRepository.findByAuthor(authorId)
+                .stream()
+                .map(PostDto::convertToDto)
+                .toList();
     }
 
-    public PostDto createPost(PostDto postDto) {
-        Post post = postDto.convertToModel();
-        return PostDto.convertToDto(postRepository.save(post));
+    @Override
+    public PostDto get(Long id) {
+        return convertToDto(postRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_EXCEPTION_MSG, id))));
     }
 
-    public PostDto updatePost(Long id, PostDto postDto) {
-        Post post = getPostModel(id);
+    @Override
+    public PostDto create(PostDto postDto) {
+        return convertToDto(postRepository.save(postDto.convertToModel()));
+    }
+
+    @Override
+    public PostDto update(Long id, PostDto postDto) {
+        Post post = getModel(id);
         post.setText(postDto.getText());
         post.setVideoPath(postDto.getVideoPath());
         post.setImagePath(postDto.getImagePath());
-        return PostDto.convertToDto(postRepository.save(post));
+        return convertToDto(postRepository.save(post));
     }
 
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    @Override
+    public void delete(Long id) {
+        postRepository.delete(getModel(id));
     }
 
 }

@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User implements Serializable {
 
@@ -37,6 +41,5 @@ public class User implements Serializable {
 
     @ManyToMany
     private List<User> friends;
-
 
 }

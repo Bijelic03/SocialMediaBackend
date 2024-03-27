@@ -6,15 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
-@AllArgsConstructor
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostDto {
 
-    @NonNull
+    @NotNull
     private User author;
 
     private String text;
