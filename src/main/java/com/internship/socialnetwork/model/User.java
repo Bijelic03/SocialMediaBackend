@@ -45,6 +45,6 @@ public class User implements Serializable {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
-    private List<UserFriend> friendships;
+    private List<Friendship> friendships;
 
 }

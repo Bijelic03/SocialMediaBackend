@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.service.impl;
 
+import static com.internship.socialnetwork.dto.UserDto.convertToDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -33,23 +34,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
-    private final Long userId1 = 1L;
+    private static final String NOT_FOUND_EXCEPTION_MSG = "User with id %s not found!";
 
-    private final Long userId2 = 2L;
+    private final User user = createUser(1L, "username");
 
-    private final String username1 = "user1";
-
-    private final String username2 = "user2";
-
-    private final String name1 = "John";
-
-    private final String name2 = "Alice";
-
-    private final String surname1 = "Doe";
-
-    private final String surname2 = "Johnson";
-
-    private final String email = "test@email.com";
+    private final User otherUser = createUser(2L, "otherUsername");
 
     @Mock
     private UserRepository userRepository;
@@ -58,48 +47,44 @@ class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Test
-    void shouldGetUser() {
+    void shouldGetUser_whenGetUser_ifUserExists() {
         // Given: Mocking new user
-        User user = new User();
-        user.setId(userId1);
-        user.setUsername(username1);
-
-        when(userRepository.findById(userId1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         // When: Getting the user
-        UserDto userDto = userService.getUser(userId1);
+        UserDto userDto = userService.getUser(user.getId());
 
         // Then: Validate userDto
         assertNotNull(userDto);
-        assertEquals(username1, userDto.getUsername());
+        assertEquals(user.getUsername(), userDto.getUsername());
 
         // Verify that userRepository.findById(...) was called exactly once with userId1
-        verify(userRepository, times(1)).findById(userId1);
+        verify(userRepository, times(1)).findById(user.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     void shouldThrowNotFoundException_whenGetUser_ifUserDoesNotExist() {
         // Given: Mocking the scenario where the user does not exist
-        when(userRepository.findById(userId2)).thenReturn(Optional.empty());
+        when(userRepository.findById(otherUser.getId())).thenReturn(Optional.empty());
 
         // When: Getting user
-        NotFoundException exception = assertThrows(NotFoundException.class,() -> userService.getUser(userId2));
+        NotFoundException exception = assertThrows(NotFoundException.class,() -> userService.getUser(otherUser.getId()));
 
         // Then: Verify that NotFoundException is thrown with appropriate message
-        assertEquals("User with id: 2 not found!", exception.getMessage());
+        assertEquals(String.format(NOT_FOUND_EXCEPTION_MSG, otherUser.getId()), exception.getMessage());
 
         // Verify that userRepository.findById(...) was called exactly once with userId2
-        verify(userRepository, times(1)).findById(userId2);
+        verify(userRepository, times(1)).findById(otherUser.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
-    void shouldGetAllUsers() {
+    void shouldGetAllUsers_whenGetAllUsers_ifUsersExist() {
         // Given: Mocking list of users
         List<User> users = new ArrayList<>();
-        users.add(User.builder().username(username1).build());
-        users.add(User.builder().username(username2).build());
+        users.add(user);
+        users.add(otherUser);
 
         when(userRepository.findAll()).thenReturn(users);
 
@@ -115,25 +100,14 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldCreateUser() {
+    void shouldCreateUser_whenCreateUser_ifUserDoesNotExist() {
         // Given: Mocking the scenario where the user does not exist
-        UserDto userDto = UserDto.builder()
-                .username(username1)
-                .name(name1)
-                .surname(surname1)
-                .email(email)
-                .build();
+        UserDto userDto = convertToDto(user);
 
         when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.empty());
 
-        User savedUser = User.builder()
-                .username(username1)
-                .name(name1)
-                .surname(surname1)
-                .email(email)
-                .build();
 
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
         // When: Creating the user
         UserDto createdUserDto = userService.createUser(userDto);
@@ -155,14 +129,9 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldThrowBadRequestException_whenUserAlreadyExists() {
+    void shouldThrowBadRequestException_whenCreateUser_ifUserExists() {
         // Given: Mocking existing user
-        UserDto existingUserDto = UserDto.builder()
-                .username(username1)
-                .name(name1)
-                .surname(surname1)
-                .email(email)
-                .build();
+        UserDto existingUserDto = convertToDto(otherUser);
 
         when(userRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.of(existingUserDto.convertToModel()));
 
@@ -180,7 +149,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldThrowBadRequestException_whenUsernameIsNull() {
+    void shouldThrowBadRequestException_whenCreateUser_ifUsernameIsNull() {
         // Given: Creating a UserDto with null username
         UserDto userDto = new UserDto();
         userDto.setUsername(null);
@@ -194,70 +163,76 @@ class UserServiceImplTest {
     }
 
     @Test
-    void shouldGetUserModel() {
+    void shouldGetUserModel_whenGetUserModel_ifUserExists() {
         // Given: Mocking the scenario where the user exists
-        User user = new User();
-        user.setId(userId1);
-        user.setUsername(username1);
-        when(userRepository.findById(userId1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         // When: Getting the user model
-        User resultUser = userService.getUserModel(userId1);
+        User resultUser = userService.getUserModel(user.getId());
 
         // Then: Verify that the correct user model is returned
         assertNotNull(resultUser);
-        assertEquals(username1, resultUser.getUsername());
+        assertEquals(user.getUsername(), resultUser.getUsername());
 
         // Verify that userRepository.findById(...) was called exactly once with userId1
-        verify(userRepository, times(1)).findById(userId1);
+        verify(userRepository, times(1)).findById(user.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     void shouldThrowNotFoundException_whenGetUserByModel_ifUserDoesNotExist() {
         // Given: Mocking the scenario where the user does not exist
-        when(userRepository.findById(userId2)).thenReturn(Optional.empty());
+        when(userRepository.findById(otherUser.getId())).thenReturn(Optional.empty());
 
         // When: Getting the user model
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUserModel(userId2));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUserModel(otherUser.getId()));
 
         // Then: Verify that NotFoundException is thrown with appropriate message
-        assertEquals("User with id: 2 not found!", exception.getMessage());
+        assertEquals(String.format(NOT_FOUND_EXCEPTION_MSG, otherUser.getId()), exception.getMessage());
 
         // Verify that userRepository.findById(...) was called exactly once with userId2
-        verify(userRepository, times(1)).findById(userId2);
+        verify(userRepository, times(1)).findById(otherUser.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
-    void shouldDeleteUser() {
+    void shouldDeleteUser_whenDeleteUser_ifUserExists() {
         // Given: Mocking the scenario where the user exists
-        User user = User.builder().id(userId1).build();
-        when(userRepository.findById(userId1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         // When: Deleting the user
-        userService.deleteUser(userId1);
+        userService.deleteUser(user.getId());
 
         // Then: Verify that the user is deleted
         assertEquals(0, userService.getAllUsers().size());
 
         // Verify that userRepository.deleteById(...) was called exactly once with the user ID
-        verify(userRepository, times(1)).deleteById(userId1);
+        verify(userRepository, times(1)).delete(user);
     }
 
     @Test
     void shouldThrowNotFoundException_whenDeleteUser_ifUserDoesNotExist() {
         // Given: Mocking the scenario where the user does not exist
-        when(userRepository.findById(userId1)).thenReturn(Optional.empty());
+        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
 
         // When: Deleting the user
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.deleteUser(userId1));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.deleteUser(user.getId()));
 
         // Then: Verify that NotFoundException is thrown with appropriate message
-        assertEquals("User with id: 1 not found!", exception.getMessage());
+        assertEquals(String.format(NOT_FOUND_EXCEPTION_MSG, user.getId()), exception.getMessage());
 
         // Verify that userRepository.deleteById(...) was not called
         verify(userRepository, never()).deleteById(any());
+    }
+    
+    private User createUser(Long id, String username) {
+        return User.builder()
+                .id(id)
+                .username(username)
+                .name("Alice")
+                .surname("Johnson")
+                .email("user@email.com")
+                .build();
     }
 
 }

@@ -21,12 +21,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserDto::convertToDto).toList();
+        return userRepository.findAll()
+                .stream()
+                .map(UserDto::convertToDto)
+                .toList();
     }
 
     @Override
     public User getUserModel(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %s not found!", id)));
     }
 
     @Override
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
         // TODO: Hash password
 
         userRepository.findByUsernameOrEmail(userDto.getUsername(), userDto.getEmail())
-                .ifPresent(u -> {
+                .ifPresent(user -> {
                     throw new BadRequestException("User already exists in the system");
                 });
         return convertToDto(userRepository.save(userDto.convertToModel()));
@@ -56,8 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(Long id) {
-        userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " not found!"));
-        userRepository.deleteById(id);
+        userRepository.delete(getUserModel(id));
     }
 
 }

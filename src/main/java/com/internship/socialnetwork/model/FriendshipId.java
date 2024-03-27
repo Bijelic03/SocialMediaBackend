@@ -11,10 +11,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Embeddable
-public class UserFriendId implements Serializable {
+public class FriendshipId implements Serializable {
 
-    private long userId;
+    private Long userId;
 
-    private long friendId;
+    private Long friendId;
 
 }
