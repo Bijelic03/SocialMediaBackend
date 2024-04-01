@@ -7,6 +7,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,13 +30,14 @@ public class Post {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
+    @Column(length = 280)
     private String text;
 
     private String imagePath;
 
     private String videoPath;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments;
 
 }
