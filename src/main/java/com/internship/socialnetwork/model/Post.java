@@ -2,6 +2,11 @@ package com.internship.socialnetwork.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -12,7 +17,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Post {
 
@@ -20,6 +27,7 @@ public class Post {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
     @Column(length = 280)
