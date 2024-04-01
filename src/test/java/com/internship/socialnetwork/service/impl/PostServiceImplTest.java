@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class PostServiceImplTest {
+class PostServiceImplTest {
 
     private static final String NOT_FOUND_EXCEPTION_MSG = "Post with id 1 not found!";
 
@@ -54,7 +53,7 @@ public class PostServiceImplTest {
         assertEquals(post.getAuthor().getId(), postDto.getAuthor().getId());
 
         // Verify that postRepository.findById(...) was called exactly once with postId1
-        verify(postRepository, times(1)).findById(post.getId());
+        verify(postRepository).findById(post.getId());
         verifyNoMoreInteractions(postRepository);
     }
 
@@ -70,7 +69,7 @@ public class PostServiceImplTest {
         assertEquals(NOT_FOUND_EXCEPTION_MSG, exception.getMessage());
 
         // Verify that postRepository.findById(...) was called exactly once with userId2
-        verify(postRepository, times(1)).findById(post.getId());
+        verify(postRepository).findById(post.getId());
         verifyNoMoreInteractions(postRepository);
     }
 
@@ -89,7 +88,7 @@ public class PostServiceImplTest {
         assertEquals(2, postDtos.size());
 
         // Verify that postRepository.findAll() was called exactly once
-        verify(postRepository, times(1)).findAll();
+        verify(postRepository).findAll();
         verifyNoMoreInteractions(postRepository);
     }
 
@@ -108,7 +107,7 @@ public class PostServiceImplTest {
         assertEquals(2, postDtos.size());
 
         // Verify that postRepository.findByAuthor() was called exactly once
-        verify(postRepository, times(1)).findByAuthor(post.getAuthor().getId());
+        verify(postRepository).findByAuthor(post.getAuthor().getId());
         verifyNoMoreInteractions(postRepository);
     }
 
@@ -128,7 +127,7 @@ public class PostServiceImplTest {
         assertEquals(postDto.getImagePath(), createdPostDto.getImagePath());
 
         // Verify that postRepository.save(...) was called exactly once with any(Post.class) argument
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(postRepository).save(any(Post.class));
 
         // Verify that there are no more interactions with postRepository
         verifyNoMoreInteractions(postRepository);
@@ -147,10 +146,10 @@ public class PostServiceImplTest {
         assertEquals(0, postService.getAll().size());
 
         // Verify that postRepository.delete(...) was called exactly once with the post ID
-        verify(postRepository, times(1)).delete(post);
+        verify(postRepository).delete(post);
 
         // Verify that postRepository.findById(...) was called exactly once with the post ID
-        verify(postRepository, times(1)).findById(post.getId());
+        verify(postRepository).findById(post.getId());
     }
 
     @Test
@@ -168,7 +167,7 @@ public class PostServiceImplTest {
         verify(postRepository, never()).deleteById(any());
 
         // Verify that postRepository.findById(...) was called exactly once with the post ID
-        verify(postRepository, times(1)).findById(post.getId());
+        verify(postRepository).findById(post.getId());
     }
 
     private User createUser() {

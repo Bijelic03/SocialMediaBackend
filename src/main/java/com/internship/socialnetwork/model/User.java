@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +42,7 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false, length = 25)
     private String username;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "author")
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")

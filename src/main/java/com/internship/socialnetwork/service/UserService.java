@@ -11,6 +11,8 @@ public interface UserService {
 
     UserDto getUser(Long id);
 
+    User getUserModel(String username);
+
     User getUserModel(Long id);
 
     UserDto createUser(UserDto userDto);

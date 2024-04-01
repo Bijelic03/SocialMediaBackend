@@ -4,10 +4,10 @@ import com.internship.socialnetwork.dto.PostDto;
 import com.internship.socialnetwork.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,16 +27,19 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
+    public ResponseEntity<List<PostDto>> getAllPostsByAuthor(@RequestParam Long authorId) {
+        return ResponseEntity.ok(postService.getAllByAuthorId(authorId));
+    }
+
+    @GetMapping
     public ResponseEntity<List<PostDto>> getAll() {
         return ResponseEntity.ok(postService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getOne(@RequestParam Long id) {
+    public ResponseEntity<PostDto> getOne(@PathVariable Long id) {
         return ResponseEntity.ok(postService.get(id));
     }
-
-    //ToDo: Create getAllPostsById in the user controller
 
     @PostMapping
     public ResponseEntity<PostDto> create(@Valid @RequestBody PostDto postDto) {
@@ -44,12 +47,12 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> update(@RequestParam Long id, @RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> update(@PathVariable Long id, @RequestBody PostDto postDto) {
         return ResponseEntity.ok(postService.update(id, postDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@RequestParam Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         postService.delete(id);
         return ResponseEntity.noContent().build();
     }

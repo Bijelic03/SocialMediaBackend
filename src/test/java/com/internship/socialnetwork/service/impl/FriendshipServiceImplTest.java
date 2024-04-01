@@ -59,7 +59,7 @@ class FriendshipServiceImplTest {
         assertEquals(1, friends.size());
 
         // Verify that friendshipRepository.findAllFriends() was called exactly once
-        verify(friendshipRepository, times(1)).findAllFriends(user.getId());
+        verify(friendshipRepository).findAllFriends(user.getId());
 
         // Verify that there are no more interactions with friendshipRepository
         verifyNoMoreInteractions(friendshipRepository);
@@ -78,7 +78,7 @@ class FriendshipServiceImplTest {
         assertEquals(1, friendRequests.size());
 
         // Verify that friendshipRepository.findAllFriendRequests() was called exactly once
-        verify(friendshipRepository, times(1)).findAllFriendRequests(user.getId());
+        verify(friendshipRepository).findAllFriendRequests(user.getId());
 
         // Verify that there are no more interactions with friendshipRepository
         verifyNoMoreInteractions(friendshipRepository);
@@ -97,7 +97,7 @@ class FriendshipServiceImplTest {
         assertEquals(1, sentFriendRequests.size());
 
         // Verify that friendshipRepository.findAllSentFriendRequests() was called exactly once
-        verify(friendshipRepository, times(1)).findAllSentFriendRequests(user.getId());
+        verify(friendshipRepository).findAllSentFriendRequests(user.getId());
 
         // Verify that there are no more interactions with friendshipRepository
         verifyNoMoreInteractions(friendshipRepository);
@@ -122,10 +122,10 @@ class FriendshipServiceImplTest {
         assertEquals(friendshipDto.getUsername(), friendship.getUser().getUsername());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
 
         // Verify that friendshipRepository.save(...) is called exactly once
-        verify(friendshipRepository, times(1)).save(any(Friendship.class));
+        verify(friendshipRepository).save(any(Friendship.class));
 
         // Verify that userService.getUserModel(...) is called exactly twice
         verify(userService, times(2)).getUserModel(anyLong());
@@ -150,7 +150,7 @@ class FriendshipServiceImplTest {
                 friendship.getUser().getId(), friendship.getFriend().getId()), exception.getMessage());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
 
         // Verify that friendshipRepository.save(...) was not called
         verify(friendshipRepository, times(0)).save(any(Friendship.class));
@@ -171,10 +171,10 @@ class FriendshipServiceImplTest {
         assertEquals(0, friendshipService.getFriends(friendship.getUser().getId()).size());
 
         // Verify that friendshipRepository.delete(...) was called exactly once
-        verify(friendshipRepository, times(1)).delete(friendship);
+        verify(friendshipRepository).delete(friendship);
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
     }
 
     @Test
@@ -191,7 +191,7 @@ class FriendshipServiceImplTest {
                 friendship.getUser().getId(), friendship.getFriend().getId()), exception.getMessage());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
 
         // Verify that friendshipRepository.delete(...) was not called
         verify(friendshipRepository, times(0)).delete(any(Friendship.class));
@@ -210,10 +210,10 @@ class FriendshipServiceImplTest {
        friendshipService.acceptFriendRequest(friendship.getUser().getId(), friendship.getFriend().getId());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
 
         // Verify that friendshipRepository.save(...) is called exactly once
-        verify(friendshipRepository, times(1)).save(any(Friendship.class));
+        verify(friendshipRepository).save(any(Friendship.class));
 
         // Verify that there are no more interactions with friendshipRepository
         verifyNoMoreInteractions(friendshipRepository);
@@ -234,7 +234,7 @@ class FriendshipServiceImplTest {
                 friendship.getUser().getId(), friendship.getFriend().getId()), exception.getMessage());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
-        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+        verify(friendshipRepository).findFriendship(anyLong(), anyLong());
 
         // Verify that friendshipRepository.save(...) was not called
         verify(friendshipRepository, times(0)).save(any(Friendship.class));

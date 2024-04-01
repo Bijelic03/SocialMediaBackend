@@ -3,6 +3,7 @@ package com.internship.socialnetwork.service.impl;
 import com.internship.socialnetwork.dto.PostDto;
 import com.internship.socialnetwork.exception.NotFoundException;
 import com.internship.socialnetwork.model.Post;
+import com.internship.socialnetwork.model.User;
 import com.internship.socialnetwork.repository.PostRepository;
 import com.internship.socialnetwork.service.PostService;
 import lombok.RequiredArgsConstructor;
