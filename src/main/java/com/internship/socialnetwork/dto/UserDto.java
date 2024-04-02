@@ -1,11 +1,11 @@
 package com.internship.socialnetwork.dto;
 
 import com.internship.socialnetwork.model.User;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +13,9 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UserDto {
 
-    @NotNull
+    private Long id;
+
+    @NotBlank
     private String username;
 
     private String name;
@@ -24,6 +26,7 @@ public class UserDto {
 
     public static UserDto convertToDto(User user) {
         return UserDto.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .name(user.getName())
                 .surname(user.getSurname())
