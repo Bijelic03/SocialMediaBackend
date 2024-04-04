@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.service.impl;
 
+import com.internship.socialnetwork.config.AppConfig;
 import com.internship.socialnetwork.dto.FriendshipDto;
 import com.internship.socialnetwork.exception.BadRequestException;
 import com.internship.socialnetwork.exception.NotFoundException;
@@ -33,9 +34,16 @@ class FriendshipServiceImplTest {
 
     private static final String FRIENDSHIP_DOES_NOT_EXIST_MSG  = "Friendship with ids: %s , %s does not exist!";
 
+    private static final String NUMBER_OF_FRIENDS_EXCEEDED_MSG  = "Maximum number of friends exceeded!";
+
     private final User user = createUser(1L, "username");
 
     private final Friendship friendship = createFriendship();
+
+    private static final int maxNumberOfFriends = 50;
+
+    @Mock
+    private AppConfig appConfig;
 
     @Mock
     private FriendshipRepository friendshipRepository;
@@ -111,6 +119,8 @@ class FriendshipServiceImplTest {
         when(friendshipRepository.save(any(Friendship.class))).thenReturn(friendship);
         when(userService.getUserModel(anyLong())).thenReturn(user);
         when(friendshipRepository.findFriendship(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(friendshipRepository.countNumberOfFriends(anyLong())).thenReturn(1);
+        when(appConfig.getMaxNumberOfFriends()).thenReturn(maxNumberOfFriends);
 
         // When: Creating new friend request
         friendshipService.createFriendRequest(friendship.getUser().getId(), friendship.getFriend().getId());
@@ -123,6 +133,9 @@ class FriendshipServiceImplTest {
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
         verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+
+        // Verify that friendshipRepository.countNumberOfFriends(...) is called exactly once
+        verify(friendshipRepository, times(1)).countNumberOfFriends(anyLong());
 
         // Verify that friendshipRepository.save(...) is called exactly once
         verify(friendshipRepository, times(1)).save(any(Friendship.class));
@@ -160,7 +173,34 @@ class FriendshipServiceImplTest {
     }
 
     @Test
-    void ShouldDeleteFriendship_whenDeleteFriendship_ifFriendshipExists() {
+    void shouldThrowBadRequestException_whenCreateFriendRequest_ifNumberOfFriendsExceeded() {
+        // Given: Mocking the scenario where number of friends is exceeded
+        when(friendshipRepository.findFriendship(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(friendshipRepository.countNumberOfFriends(anyLong())).thenReturn(maxNumberOfFriends);
+
+        // When: Checking if number of friends is exceeded
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> friendshipService.createFriendRequest(friendship.getUser().getId(),
+                        friendship.getFriend().getId()));
+
+        // Then: Verify that BadRequestException is thrown with appropriate message
+        assertEquals(NUMBER_OF_FRIENDS_EXCEEDED_MSG, exception.getMessage());
+
+        // Verify that friendshipRepository.findFriendship(...) is called exactly once
+        verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+
+        // Verify that friendshipRepository.countNumberOfFriends(...) is called exactly once
+        verify(friendshipRepository, times(1)).countNumberOfFriends(anyLong());
+
+        // Verify that friendshipRepository.save(...) was not called
+        verify(friendshipRepository, times(0)).save(any(Friendship.class));
+
+        // Verify that there are no more interactions with friendshipRepository
+        verifyNoMoreInteractions(friendshipRepository);
+    }
+
+    @Test
+    void shouldDeleteFriendship_whenDeleteFriendship_ifFriendshipExists() {
         // Given: Mocking the scenario where friendship exists
         when(friendshipRepository.findFriendship(anyLong(), anyLong())).thenReturn(Optional.of(friendship));
 
@@ -204,13 +244,18 @@ class FriendshipServiceImplTest {
     void shouldAcceptFriendRequest_whenAcceptFriendRequest_ifRequestExists() {
         // Given: Mocking new friendshipDto
         when(friendshipRepository.findFriendship(anyLong(), anyLong())).thenReturn(Optional.of(friendship));
+        when(friendshipRepository.countNumberOfFriends(anyLong())).thenReturn(1);
         when(friendshipRepository.save(any(Friendship.class))).thenReturn(friendship);
+        when(appConfig.getMaxNumberOfFriends()).thenReturn(50);
 
         // When: Accepting friend request
        friendshipService.acceptFriendRequest(friendship.getUser().getId(), friendship.getFriend().getId());
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
         verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+
+        // Verify that friendshipRepository.countNumberOfFriends(...) is called exactly once
+        verify(friendshipRepository, times(1)).countNumberOfFriends(anyLong());
 
         // Verify that friendshipRepository.save(...) is called exactly once
         verify(friendshipRepository, times(1)).save(any(Friendship.class));
@@ -220,9 +265,34 @@ class FriendshipServiceImplTest {
     }
 
     @Test
+    void shouldAcceptFriendRequest_whenAcceptFriendRequest_ifNumberOfFriendsExceeded() {
+        // Given: Mocking the scenario where number of friends is exceeded
+        when(friendshipRepository.countNumberOfFriends(anyLong())).thenReturn(maxNumberOfFriends);
+
+        // When: Checking if number of friends is exceeded
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> friendshipService.acceptFriendRequest(friendship.getUser().getId(),
+                        friendship.getFriend().getId()));
+
+        // Then: Verify that BadRequestException is thrown with appropriate message
+        assertEquals(NUMBER_OF_FRIENDS_EXCEEDED_MSG, exception.getMessage());
+
+        // Verify that friendshipRepository.countNumberOfFriends(...) is called exactly once
+        verify(friendshipRepository, times(1)).countNumberOfFriends(anyLong());
+
+        // Verify that friendshipRepository.save(...) was not called
+        verify(friendshipRepository, times(0)).save(any(Friendship.class));
+
+        // Verify that there are no more interactions with friendshipRepository
+        verifyNoMoreInteractions(friendshipRepository);
+    }
+
+    @Test
     void shouldAcceptFriendRequest_whenAcceptFriendRequest_ifRequestDoesNotExist() {
         // Given: Mocking the scenario where friendship does not exist
         when(friendshipRepository.findFriendship(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(friendshipRepository.countNumberOfFriends(anyLong())).thenReturn(1);
+        when(appConfig.getMaxNumberOfFriends()).thenReturn(maxNumberOfFriends);
 
         // When: Checking if friendship exists
         NotFoundException exception = assertThrows(NotFoundException.class,
@@ -235,6 +305,9 @@ class FriendshipServiceImplTest {
 
         // Verify that friendshipRepository.findFriendship(...) is called exactly once
         verify(friendshipRepository, times(1)).findFriendship(anyLong(), anyLong());
+
+        // Verify that friendshipRepository.countNumberOfFriends(...) is called exactly once
+        verify(friendshipRepository, times(1)).countNumberOfFriends(anyLong());
 
         // Verify that friendshipRepository.save(...) was not called
         verify(friendshipRepository, times(0)).save(any(Friendship.class));
