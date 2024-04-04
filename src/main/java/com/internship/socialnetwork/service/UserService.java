@@ -9,6 +9,8 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
+    List<UserDto> searchUsers(String searchParam);
+
     UserDto getUser(Long id);
 
     User getUserModel(Long id);

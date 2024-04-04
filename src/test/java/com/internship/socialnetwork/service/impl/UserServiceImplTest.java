@@ -78,15 +78,28 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).findById(otherUser.getId());
         verifyNoMoreInteractions(userRepository);
     }
+    @Test
+    void shouldGetMatchingUsers_whenSearchUsers_ifUsersExist() {
+        // Given: Mocking list of users
+        when(userRepository.findByUsernameContainingIgnoreCaseOrNameContainingIgnoreCase(anyString(), anyString()))
+                .thenReturn(List.of(user));
+
+        // When: Searching for users
+        List<UserDto> userDtos = userService.searchUsers(user.getUsername());
+
+        // Then: Verify that correct number of users is returned
+        assertEquals(1, userDtos.size());
+
+        // Verify that userRepository.findByUsernameContainingIgnoreCaseOrNameContainingIgnoreCase(...)
+        // was called exactly once
+        verify(userRepository).findByUsernameContainingIgnoreCaseOrNameContainingIgnoreCase(anyString(), anyString());
+        verifyNoMoreInteractions(userRepository);
+    }
 
     @Test
     void shouldGetAllUsers_whenGetAllUsers_ifUsersExist() {
         // Given: Mocking list of users
-        List<User> users = new ArrayList<>();
-        users.add(user);
-        users.add(otherUser);
-
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll()).thenReturn(List.of(user, otherUser));
 
         // When: Getting all users
         List<UserDto> userDtos = userService.getAllUsers();
@@ -95,7 +108,7 @@ class UserServiceImplTest {
         assertEquals(2, userDtos.size());
 
         // Verify that userRepository.findAll() was called exactly once
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository).findAll();
         verifyNoMoreInteractions(userRepository);
     }
 
