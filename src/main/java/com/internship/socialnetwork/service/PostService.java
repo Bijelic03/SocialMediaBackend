@@ -9,6 +9,8 @@ public interface PostService {
 
     List<PostDto> getAll();
 
+    List<PostDto> getPosts(Long authorId);
+
     List<PostDto> getAllByAuthorId(Long authorId);
 
     Post getModel(Long id);

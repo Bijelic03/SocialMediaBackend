@@ -18,6 +18,8 @@
 		<spring.boot.version>3.2.3</spring.boot.version>
 		<lombok.version>1.18.32</lombok.version>
 		<jakarta.validation.version>3.0.2</jakarta.validation.version>
+		<spring.security.version>6.2.3</spring.security.version>
+		<jjwt.version>0.11.5</jjwt.version>
 	</properties>
 	<dependencies>
 
@@ -61,11 +63,28 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jakarta.validation</groupId>
-			<artifactId>jakarta.validation-api</artifactId>
-			<version>${jakarta.validation.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -7,6 +7,7 @@ import com.internship.socialnetwork.model.User;
 import com.internship.socialnetwork.repository.PostRepository;
 import com.internship.socialnetwork.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,11 @@ public class PostServiceImpl implements PostService {
     public Post getModel(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(NOT_FOUND_EXCEPTION_MSG, id)));
+    }
+
+    @Override
+    public List<PostDto> getPosts(Long authorId) {
+        return authorId == null ? getAll() : getAllByAuthorId(authorId);
     }
 
     @Override
