@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.service.impl;
 
+import com.internship.socialnetwork.config.AppConfig;
 import com.internship.socialnetwork.dto.FriendshipDto;
 import com.internship.socialnetwork.exception.BadRequestException;
 import com.internship.socialnetwork.exception.NotFoundException;
@@ -29,6 +30,8 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     private final UserService userService;
 
+    private final AppConfig appConfig;
+
     @Override
     public List<FriendshipDto> getFriends(Long userId) {
         return friendshipRepository.findAllFriends(userId)
@@ -54,6 +57,7 @@ public class FriendshipServiceImpl implements FriendshipService {
                 .ifPresent(friendship -> {
                     throw new BadRequestException(String.format(FRIENDSHIP_EXISTS_MSG, userId, friendId));
                 });
+        checkNumberOfFriends(userId);
 
         return convertToDto(friendshipRepository.save(
                 Friendship.builder()
@@ -70,8 +74,11 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public FriendshipDto acceptFriendRequest(Long userId, Long friendId) {
+        checkNumberOfFriends(userId);
+
         Friendship friendship = findFriendship(userId, friendId);
         friendship.setFriendshipStatus(ACCEPTED);
+
         return convertToDto(friendshipRepository.save(friendship));
     }
 
@@ -79,6 +86,12 @@ public class FriendshipServiceImpl implements FriendshipService {
         return friendshipRepository.findFriendship(userId, friendId)
                 .orElseThrow(() -> new NotFoundException(String.format(FRIENDSHIP_DOES_NOT_EXIST_MSG,
                         userId, friendId)));
+    }
+
+    private void checkNumberOfFriends(Long userId) {
+        if (friendshipRepository.countNumberOfFriends(userId) >= appConfig.getMaxNumberOfFriends()) {
+            throw new BadRequestException("Maximum number of friends exceeded!");
+        }
     }
 
 }

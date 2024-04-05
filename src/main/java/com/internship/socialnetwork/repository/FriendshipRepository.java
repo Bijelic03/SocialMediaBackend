@@ -11,6 +11,12 @@ import java.util.Optional;
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
+    @Query("SELECT COUNT(friendship) " +
+            "FROM Friendship friendship " +
+            "WHERE (friendship.user.id = :userId AND friendship.friendshipStatus = ACCEPTED) OR " +
+            "(friendship.friend.id = :userId AND friendship.friendshipStatus = ACCEPTED) ")
+    int countNumberOfFriends(long userId);
+
     @Query("SELECT friendship " +
             "FROM Friendship friendship " +
             "WHERE (friendship.user.id = :userId AND friendship.friendshipStatus = ACCEPTED) OR " +
