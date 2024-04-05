@@ -1,7 +1,6 @@
 package com.internship.socialnetwork.dto;
 
 import com.internship.socialnetwork.model.Post;
-import com.internship.socialnetwork.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 public class PostDto {
 
     @NotNull
-    private User author;
+    private UserDto author;
 
     private String text;
 
@@ -25,7 +24,7 @@ public class PostDto {
 
     public static PostDto convertToDto(Post post){
         return PostDto.builder()
-                .author(post.getAuthor())
+                .author(UserDto.convertToDto(post.getAuthor()))
                 .text(post.getText())
                 .imagePath(post.getImagePath())
                 .videoPath(post.getVideoPath())
@@ -34,7 +33,6 @@ public class PostDto {
 
     public Post convertToModel(){
         return Post.builder()
-                .author(getAuthor())
                 .text(getText())
                 .imagePath(getImagePath())
                 .videoPath(getVideoPath())

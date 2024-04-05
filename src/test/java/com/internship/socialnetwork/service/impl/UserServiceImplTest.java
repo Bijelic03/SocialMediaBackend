@@ -22,7 +22,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.internship.socialnetwork.dto.UserDto;
@@ -59,7 +58,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(), userDto.getUsername());
 
         // Verify that userRepository.findById(...) was called exactly once with userId1
-        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository).findById(user.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -75,7 +74,7 @@ class UserServiceImplTest {
         assertEquals(String.format(NOT_FOUND_EXCEPTION_MSG, otherUser.getId()), exception.getMessage());
 
         // Verify that userRepository.findById(...) was called exactly once with userId2
-        verify(userRepository, times(1)).findById(otherUser.getId());
+        verify(userRepository).findById(otherUser.getId());
         verifyNoMoreInteractions(userRepository);
     }
     @Test
@@ -132,10 +131,10 @@ class UserServiceImplTest {
         assertEquals(userDto.getEmail(), createdUserDto.getEmail());
 
         // Verify that userRepository.findByUsernameOrEmail(...) was called exactly once with anyString() arguments
-        verify(userRepository, times(1)).findByUsernameOrEmail(anyString(), anyString());
+        verify(userRepository).findByUsernameOrEmail(anyString(), anyString());
 
         // Verify that userRepository.save(...) was called exactly once with any(User.class) argument
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository).save(any(User.class));
 
         // Verify that there are no more interactions with userRepository
         verifyNoMoreInteractions(userRepository);
@@ -155,7 +154,7 @@ class UserServiceImplTest {
         assertEquals("User already exists in the system", exception.getMessage());
 
         // Verify that userRepository.findByUsernameOrEmail(...) was called exactly once with anyString() arguments
-        verify(userRepository, times(1)).findByUsernameOrEmail(anyString(), anyString());
+        verify(userRepository).findByUsernameOrEmail(anyString(), anyString());
 
         // Verify that userRepository.save(...) was never called
         verify(userRepository, never()).save(any());
@@ -188,7 +187,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(), resultUser.getUsername());
 
         // Verify that userRepository.findById(...) was called exactly once with userId1
-        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository).findById(user.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -204,7 +203,7 @@ class UserServiceImplTest {
         assertEquals(String.format(NOT_FOUND_EXCEPTION_MSG, otherUser.getId()), exception.getMessage());
 
         // Verify that userRepository.findById(...) was called exactly once with userId2
-        verify(userRepository, times(1)).findById(otherUser.getId());
+        verify(userRepository).findById(otherUser.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -220,7 +219,7 @@ class UserServiceImplTest {
         assertEquals(0, userService.getAllUsers().size());
 
         // Verify that userRepository.deleteById(...) was called exactly once with the user ID
-        verify(userRepository, times(1)).delete(user);
+        verify(userRepository).delete(user);
     }
 
     @Test

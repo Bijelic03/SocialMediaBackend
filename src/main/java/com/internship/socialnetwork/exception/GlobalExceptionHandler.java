@@ -3,6 +3,7 @@ package com.internship.socialnetwork.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,8 +33,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessage> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return handleBadRequestException(new BadRequestException("Validation error"));
+    public ResponseEntity<ErrorMessage> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        StringBuilder errorMessageBuilder = new StringBuilder();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            errorMessageBuilder.append(((FieldError) error).getField()).append(": ").append(error.getDefaultMessage()).append("; ");
+        });
+        return handleBadRequestException(new BadRequestException(errorMessageBuilder.toString()));
     }
 
     private ResponseEntity<ErrorMessage> createResponseEntity(ErrorMessage errorMessage) {

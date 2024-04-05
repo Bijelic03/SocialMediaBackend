@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,11 +11,11 @@ import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User author;
 
     @Column(length = 280)
@@ -40,7 +42,7 @@ public class Post {
 
     private String videoPath;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "post")
     private List<Comment> comments;
 
 }

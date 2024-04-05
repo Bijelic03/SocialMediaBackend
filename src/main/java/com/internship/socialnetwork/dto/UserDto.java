@@ -36,6 +36,7 @@ public class UserDto {
 
     public User convertToModel() {
         return User.builder()
+                .id(getId())
                 .username(getUsername())
                 .name(getName())
                 .surname(getSurname())
