@@ -21,7 +21,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll()
+        return userRepository.findAll().stream()
+                .map(UserDto::convertToDto)
+                .toList();
+    }
+
+    @Override
+    public List<UserDto> searchUsers(String searchParam) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrNameContainingIgnoreCase(searchParam, searchParam)
                 .stream()
                 .map(UserDto::convertToDto)
                 .toList();
