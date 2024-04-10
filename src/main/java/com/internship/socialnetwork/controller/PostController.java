@@ -5,6 +5,7 @@ import com.internship.socialnetwork.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,13 +28,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPostsByAuthor(@RequestParam Long authorId) {
-        return ResponseEntity.ok(postService.getAllByAuthorId(authorId));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<PostDto>> getAll() {
-        return ResponseEntity.ok(postService.getAll());
+    public ResponseEntity<List<PostDto>> getAll(@RequestParam Long authorId) {
+        return ResponseEntity.ok(postService.getPosts(authorId));
     }
 
     @GetMapping("/{id}")
@@ -42,17 +38,20 @@ public class PostController {
     }
 
     @PostMapping
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
     public ResponseEntity<PostDto> create(@Valid @RequestBody PostDto postDto) {
         return ResponseEntity.status(CREATED).body(postService.create(postDto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
     public ResponseEntity<PostDto> update(@PathVariable Long id, @RequestBody PostDto postDto) {
         return ResponseEntity.ok(postService.update(id, postDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
+    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody PostDto postDto) {
         postService.delete(id);
         return ResponseEntity.noContent().build();
     }

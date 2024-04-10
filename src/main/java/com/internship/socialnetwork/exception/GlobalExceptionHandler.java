@@ -27,6 +27,11 @@ public class GlobalExceptionHandler {
         return createResponseEntity(createErrorMessage(exception, HttpStatus.BAD_REQUEST));
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorMessage> handleUnauthorizedException(UnauthorizedException exception) {
+        return createResponseEntity(createErrorMessage(exception, HttpStatus.UNAUTHORIZED));
+    }
+
     @ExceptionHandler(InternalServerException.class)
     public ResponseEntity<ErrorMessage> handleInternalServerException(InternalServerException exception) {
         return createResponseEntity(createErrorMessage(exception, HttpStatus.INTERNAL_SERVER_ERROR));

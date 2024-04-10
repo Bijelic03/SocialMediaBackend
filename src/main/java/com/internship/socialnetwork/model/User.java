@@ -2,6 +2,8 @@ package com.internship.socialnetwork.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,8 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "`user`")
-public class User implements Serializable {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,5 +47,8 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user")
     private List<Friendship> friendships;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }

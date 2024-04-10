@@ -6,6 +6,7 @@ import com.internship.socialnetwork.service.FriendshipService;
 import com.internship.socialnetwork.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,37 +52,39 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friend-requests")
-    public ResponseEntity<List<FriendshipDto>> getFriendRequests(@PathVariable Long id, @RequestParam(required = false) Boolean sent) {
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
+    public ResponseEntity<List<FriendshipDto>> getFriendRequests(@PathVariable Long id,
+                                                                 @RequestParam(required = false) Boolean sent) {
         return ResponseEntity.ok(friendshipService.getFriendRequests(id, sent));
     }
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.status(CREATED).body(userService.createUser(userDto));
-    }
-
     @PostMapping("/{userId}/friends/{friendId}/requests")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<FriendshipDto> sendFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
         return ResponseEntity.status(CREATED).body(friendshipService.createFriendRequest(userId, friendId));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
     @PatchMapping("/{userId}/friends/{friendId}")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<FriendshipDto> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
         return ResponseEntity.ok(friendshipService.acceptFriendRequest(userId, friendId));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
+    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<Void> unfriend(@PathVariable Long userId, @PathVariable Long friendId) {
         friendshipService.deleteFriendship(userId, friendId);
         return ResponseEntity.noContent().build();
