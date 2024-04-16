@@ -4,6 +4,7 @@ import com.internship.socialnetwork.dto.AuthenticationRequestDto;
 import com.internship.socialnetwork.dto.AuthenticationResponseDto;
 import com.internship.socialnetwork.dto.RegisterRequestDto;
 import com.internship.socialnetwork.dto.UserDto;
+import com.internship.socialnetwork.exception.BadRequestException;
 import com.internship.socialnetwork.exception.UnauthorizedException;
 import com.internship.socialnetwork.model.Role;
 import com.internship.socialnetwork.model.User;
@@ -40,6 +41,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDto register(RegisterRequestDto request) {
+        userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail())
+                .ifPresent(user -> {
+                    throw new BadRequestException("User already exists in the system");
+                });
         User user = User.builder()
                 .username(request.getUsername())
                 .name(request.getName())
