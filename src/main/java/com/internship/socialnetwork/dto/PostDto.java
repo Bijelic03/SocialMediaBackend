@@ -33,6 +33,7 @@ public class PostDto {
 
     public Post convertToModel(){
         return Post.builder()
+                .author(getAuthor().convertToModel())
                 .text(getText())
                 .imagePath(getImagePath())
                 .videoPath(getVideoPath())

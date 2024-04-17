@@ -98,4 +98,10 @@ public class AuthServiceImpl implements AuthService {
         return userDetails.getUsername().equals(userService.getUserModel(userId).getUsername());
     }
 
+    @Override
+    public boolean isAuthorized(String username) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUsername().equals(userService.getUserModel(username).getUsername());
+    }
+
 }

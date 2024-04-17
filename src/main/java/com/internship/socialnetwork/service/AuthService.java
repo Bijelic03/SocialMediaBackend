@@ -18,4 +18,5 @@ public interface AuthService {
 
     boolean isAuthorized(Long userId) throws BadRequestException;
 
+    boolean isAuthorized(String username);
 }

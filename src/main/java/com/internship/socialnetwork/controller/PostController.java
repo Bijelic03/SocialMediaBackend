@@ -38,19 +38,19 @@ public class PostController {
     }
 
     @PostMapping
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#postDto.author.id)")
     public ResponseEntity<PostDto> create(@Valid @RequestBody PostDto postDto) {
         return ResponseEntity.status(CREATED).body(postService.create(postDto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#postDto.author.id)")
     public ResponseEntity<PostDto> update(@PathVariable Long id, @RequestBody PostDto postDto) {
         return ResponseEntity.ok(postService.update(id, postDto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#postDto.author.id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#postDto.author.id)")
     public ResponseEntity<Void> delete(@PathVariable Long id, @RequestBody PostDto postDto) {
         postService.delete(id);
         return ResponseEntity.noContent().build();

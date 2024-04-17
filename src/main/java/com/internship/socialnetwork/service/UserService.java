@@ -17,6 +17,8 @@ public interface UserService {
 
     User getUserModel(Long id);
 
+    UserDto getUser(String username);
+
     UserDto createUser(UserDto userDto);
 
     void deleteUser(Long id);
