@@ -1,5 +1,6 @@
 package com.internship.socialnetwork.config;
 
+import io.minio.MinioClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,26 @@ public class AppConfig {
 
     @Value("${jwt.refresh.token.expiration}")
     private Long refreshExpiration;
+
+    @Value("${file.part.size}")
+    private Long FILE_PART_SIZE;
+
+    @Value("${minio.secret.key}")
+    private String MINIO_SECRET_KEY;
+
+    @Value("${minio.access.key}")
+    private String MINIO_ACCESS_KEY;
+
+    @Value("${minio.endpoint}")
+    private String MINIO_ENDPOINT;
+
+    @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder()
+                .endpoint(MINIO_ENDPOINT)
+                .credentials(MINIO_ACCESS_KEY, MINIO_SECRET_KEY)
+                .build();
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

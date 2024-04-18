@@ -1,6 +1,8 @@
 package com.internship.socialnetwork.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,9 +40,10 @@ public class Post {
     @Column(length = 280)
     private String text;
 
-    private String imagePath;
-
-    private String videoPath;
+    @ElementCollection
+    @CollectionTable(name = "post_media", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "media_path")
+    private List<String> mediaPaths;
 
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "post")
     private List<Comment> comments;
