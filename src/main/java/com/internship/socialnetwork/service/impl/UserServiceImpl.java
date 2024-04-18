@@ -52,6 +52,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUser(String username) {
+        return convertToDto(getUserModel((username)));
+    }
+
+    @Override
     public UserDto createUser(UserDto userDto) {
 
         // TODO: Hash password

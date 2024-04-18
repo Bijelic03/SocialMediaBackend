@@ -5,6 +5,7 @@ import com.internship.socialnetwork.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,11 +37,13 @@ public class CommentController {
     }
 
     @PostMapping
+    @PreAuthorize("@authServiceImpl.isAuthorized(#commentDto.authorUsername)")
     public ResponseEntity<CommentDto> create(@PathVariable Long postId, @Valid @RequestBody CommentDto commentDto) {
         return ResponseEntity.status(CREATED).body(commentService.createComment(postId, commentDto));
     }
 
     @PutMapping
+    @PreAuthorize("@authServiceImpl.isAuthorized(#commentDto.authorUsername)")
     public ResponseEntity<CommentDto> update(@Valid @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.updateComment(commentDto));
     }

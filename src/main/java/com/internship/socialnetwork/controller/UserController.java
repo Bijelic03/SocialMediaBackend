@@ -41,9 +41,9 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUsers(searchParam));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+    @GetMapping("/{username}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String  username) {
+        return ResponseEntity.ok(userService.getUser(username));
     }
 
     @GetMapping("/{id}/friends")
@@ -52,45 +52,46 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friend-requests")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#id)")
     public ResponseEntity<List<FriendshipDto>> getFriendRequests(@PathVariable Long id,
                                                                  @RequestParam(required = false) Boolean sent) {
         return ResponseEntity.ok(friendshipService.getFriendRequests(id, sent));
     }
 
     @PostMapping("/{userId}/friends/{friendId}/requests")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<FriendshipDto> sendFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
         return ResponseEntity.status(CREATED).body(friendshipService.createFriendRequest(userId, friendId));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#id)")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
     @PatchMapping("/{userId}/friends/{friendId}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<FriendshipDto> acceptFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
         return ResponseEntity.ok(friendshipService.acceptFriendRequest(userId, friendId));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#id)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
-    @PreAuthorize("@authenticationServiceImpl.isAuthorized(#userId)")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<Void> unfriend(@PathVariable Long userId, @PathVariable Long friendId) {
         friendshipService.deleteFriendship(userId, friendId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}/requests")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#userId)")
     public ResponseEntity<Void> rejectFriendRequest(@PathVariable Long userId, @PathVariable Long friendId) {
         friendshipService.deleteFriendship(userId, friendId);
         return ResponseEntity.noContent().build();
