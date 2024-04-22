@@ -70,9 +70,9 @@ public class PostServiceImpl implements PostService {
 
             list.add(  fileService.uploadFile(file, "users/" + postCreateDto.getAuthorId() + "/"));
             post.setMediaPaths(list);
-            post.setAuthor(userService.getUserModel(postCreateDto.getAuthorId()));
-            post.setText(postCreateDto.getText());
         }
+        post.setAuthor(userService.getUserModel(postCreateDto.getAuthorId()));
+        post.setText(postCreateDto.getText());
         return convertToDto(postRepository.save(post));
     }
 
