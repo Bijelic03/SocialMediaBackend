@@ -13,5 +13,18 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - local_pgdata:/var/lib/postgresql/data
 
+  storage:
+    image: minio/minio:latest
+    container_name: storage
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: 'server /data --console-address ":9001"'
+    volumes:
+      - local_storage:/data
+    environment:
+      MINIO_WRITE_API_ACCESS: true
 volumes:
   local_pgdata:
+  local_storage:
