@@ -25,9 +25,15 @@ public class CommentDto {
 
     private Long parentCommentId;
 
+    private Long postId;
+
+    private Long postAuthorId;
+
     public static CommentDto convertToDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
+                .postId(comment.getPost().getId())
+                .postAuthorId(comment.getPost().getAuthor().getId())
                 .text(comment.getText())
                 .authorUsername(comment.getAuthor().getUsername())
                 .parentCommentId(Optional.ofNullable(comment.getParentComment())
