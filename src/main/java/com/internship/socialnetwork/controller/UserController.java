@@ -51,6 +51,12 @@ public class UserController {
         return ResponseEntity.ok(friendshipService.getFriends(id));
     }
 
+    @GetMapping("/{userId}/friends/{friendId}")
+    @PreAuthorize("@authServiceImpl.isAuthorized(#userId)")
+    public ResponseEntity<FriendshipDto> getFriendship(@PathVariable Long userId, @PathVariable Long friendId) {
+        return ResponseEntity.ok(friendshipService.findFriendship(userId, friendId));
+    }
+
     @GetMapping("/{id}/friend-requests")
     @PreAuthorize("@authServiceImpl.isAuthorized(#id)")
     public ResponseEntity<List<FriendshipDto>> getFriendRequests(@PathVariable Long id,

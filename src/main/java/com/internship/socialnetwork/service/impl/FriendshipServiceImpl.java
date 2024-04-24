@@ -69,20 +69,25 @@ public class FriendshipServiceImpl implements FriendshipService {
 
     @Override
     public void deleteFriendship(Long userId, Long friendId) {
-        friendshipRepository.delete(findFriendship(userId, friendId));
+        friendshipRepository.delete(findFriendshipModel(userId, friendId));
     }
 
     @Override
     public FriendshipDto acceptFriendRequest(Long userId, Long friendId) {
         checkNumberOfFriends(userId);
 
-        Friendship friendship = findFriendship(userId, friendId);
+        Friendship friendship = findFriendshipModel(userId, friendId);
         friendship.setFriendshipStatus(ACCEPTED);
 
         return convertToDto(friendshipRepository.save(friendship));
     }
 
-    private Friendship findFriendship(Long userId, Long friendId) {
+    @Override
+    public FriendshipDto findFriendship(Long userId, Long friendId) {
+        return convertToDto(findFriendshipModel(userId, friendId));
+    }
+
+    private Friendship findFriendshipModel(Long userId, Long friendId) {
         return friendshipRepository.findFriendship(userId, friendId)
                 .orElseThrow(() -> new NotFoundException(String.format(FRIENDSHIP_DOES_NOT_EXIST_MSG,
                         userId, friendId)));
