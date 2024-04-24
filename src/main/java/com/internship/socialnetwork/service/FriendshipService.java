@@ -16,4 +16,5 @@ public interface FriendshipService {
 
     FriendshipDto acceptFriendRequest(Long userId, Long friendId);
 
+    FriendshipDto findFriendship(Long userId, Long friendId);
 }

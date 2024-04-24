@@ -1,6 +1,7 @@
 package com.internship.socialnetwork.dto;
 
 import com.internship.socialnetwork.model.Friendship;
+import com.internship.socialnetwork.model.FriendshipStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FriendshipDto {
 
-    private Long userId;
+    private UserDto user;
 
-    private Long friendId;
+    private UserDto friend;
+
+    private FriendshipStatus status;
 
     @NotBlank
     private String username;
@@ -24,8 +27,9 @@ public class FriendshipDto {
 
     public static FriendshipDto convertToDto(Friendship friendship) {
         return FriendshipDto.builder()
-                .userId(friendship.getUser().getId())
-                .friendId(friendship.getFriend().getId())
+                .status(friendship.getFriendshipStatus())
+                .user(UserDto.convertToDto(friendship.getUser()))
+                .friend(UserDto.convertToDto(friendship.getFriend()))
                 .username(friendship.getUser().getUsername())
                 .friendUsername(friendship.getFriend().getUsername())
                 .build();
